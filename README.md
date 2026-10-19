@@ -50,8 +50,9 @@ loaded, ±350 MB process peak.
 The source must stay public (AGPL-3.0, see `COMPLIANCE.md`). First push:
 
 ```sh
-gh repo create ArizonaNix/nudenet-svc --public --source . --remote origin --push
-# or, if the remote already exists:  git push -u origin main
+# remote `origin` is already set to https://github.com/ArizonaNix/nudenet-svc.git
+gh repo create ArizonaNix/nudenet-svc --public --description "HTTP wrapper around NudeNet (AGPL-3.0)"
+git push -u origin main
 ```
 
 Every deployed image must be built from a pushed commit, with
