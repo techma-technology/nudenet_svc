@@ -30,7 +30,7 @@ Labels: `FEMALE_GENITALIA_COVERED`, `FACE_FEMALE`, `BUTTOCKS_EXPOSED`,
 
 ```sh
 docker build -t nudenet-svc:1.0.0 \
-  --build-arg SOURCE_URL=https://github.com/ArizonaNix/nudenet-svc \
+  --build-arg SOURCE_URL=https://github.com/techma-technology/nudenet_svc \
   --build-arg SOURCE_COMMIT=$(git rev-parse HEAD) .
 docker run --rm -p 127.0.0.1:8000:8000 --read-only --tmpfs /tmp nudenet-svc:1.0.0
 curl --data-binary @photo.jpg -H 'Content-Type: image/jpeg' http://127.0.0.1:8000/v1/detect
@@ -47,11 +47,11 @@ loaded, ±350 MB process peak.
 
 ## Publishing
 
-The source must stay public (AGPL-3.0, see `COMPLIANCE.md`). First push:
+The source is public at https://github.com/techma-technology/nudenet_svc
+(AGPL-3.0, see `COMPLIANCE.md`) and must stay public. Setting up a clone:
 
 ```sh
-# remote `origin` is already set to https://github.com/ArizonaNix/nudenet-svc.git
-gh repo create ArizonaNix/nudenet-svc --public --description "HTTP wrapper around NudeNet (AGPL-3.0)"
+git remote add origin https://github.com/techma-technology/nudenet_svc.git
 git push -u origin main
 ```
 
