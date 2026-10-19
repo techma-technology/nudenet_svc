@@ -1,21 +1,12 @@
 # nudenet-svc — AGPL-3.0-or-later (see LICENSE)
 FROM python:3.11-slim
 
-ARG SOURCE_URL=""
-ARG SOURCE_COMMIT=""
 # NudeNet release v3.4-weights, asset 640m.onnx (103,538,690 bytes).
 ARG MODEL_ASSET=https://api.github.com/repos/notAI-tech/NudeNet/releases/assets/176832019
 ARG MODEL_SHA256=04fe3d77980780c1f8297dc6d7f942fd5b3abe6942a188f742a85241e4f634eb
 
-LABEL org.opencontainers.image.title="nudenet-svc" \
-      org.opencontainers.image.description="Stateless HTTP wrapper around NudeNet" \
-      org.opencontainers.image.licenses="AGPL-3.0-or-later" \
-      org.opencontainers.image.source="${SOURCE_URL}" \
-      org.opencontainers.image.revision="${SOURCE_COMMIT}"
-
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
-    NUDENET_MODEL_PATH=/models/640m.onnx NUDENET_MODEL_SHA256=${MODEL_SHA256} \
-    SOURCE_URL=${SOURCE_URL} SOURCE_COMMIT=${SOURCE_COMMIT}
+    NUDENET_MODEL_PATH=/models/640m.onnx NUDENET_MODEL_SHA256=${MODEL_SHA256}
 
 WORKDIR /app
 COPY requirements.txt .
@@ -25,8 +16,20 @@ RUN pip install -r requirements.txt
 COPY fetch_model.py .
 RUN mkdir -p /models && python fetch_model.py "${MODEL_ASSET}" "${MODEL_SHA256}" /models/640m.onnx
 
-COPY app.py LICENSE README.md COMPLIANCE.md ./
 RUN useradd --system --uid 10001 svc
+COPY app.py LICENSE README.md COMPLIANCE.md ./
+
+# Where the source of THIS build is published (AGPL §13, GET /source).
+# Declared last so a new commit does not invalidate the pip/model layers.
+ARG SOURCE_URL=""
+ARG SOURCE_COMMIT=""
+ENV SOURCE_URL=${SOURCE_URL} SOURCE_COMMIT=${SOURCE_COMMIT}
+LABEL org.opencontainers.image.title="nudenet-svc" \
+      org.opencontainers.image.description="Stateless HTTP wrapper around NudeNet" \
+      org.opencontainers.image.licenses="AGPL-3.0-or-later" \
+      org.opencontainers.image.source="${SOURCE_URL}" \
+      org.opencontainers.image.revision="${SOURCE_COMMIT}"
+
 USER svc
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
