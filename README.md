@@ -30,7 +30,7 @@ Labels: `FEMALE_GENITALIA_COVERED`, `FACE_FEMALE`, `BUTTOCKS_EXPOSED`,
 
 ```sh
 docker build -t nudenet-svc:1.0.0 \
-  --build-arg SOURCE_URL=https://github.com/<owner>/nudenet-svc \
+  --build-arg SOURCE_URL=https://github.com/ArizonaNix/nudenet-svc \
   --build-arg SOURCE_COMMIT=$(git rev-parse HEAD) .
 docker run --rm -p 127.0.0.1:8000:8000 --read-only --tmpfs /tmp nudenet-svc:1.0.0
 curl --data-binary @photo.jpg -H 'Content-Type: image/jpeg' http://127.0.0.1:8000/v1/detect
@@ -44,6 +44,18 @@ Environment: `NUDENET_THREADS` (2), `NUDENET_MAX_BYTES` (8 MB),
 
 Measured (x86, 2 threads): ±360 ms per image, +120 MB when the model is
 loaded, ±350 MB process peak.
+
+## Publishing
+
+The source must stay public (AGPL-3.0, see `COMPLIANCE.md`). First push:
+
+```sh
+gh repo create ArizonaNix/nudenet-svc --public --source . --remote origin --push
+# or, if the remote already exists:  git push -u origin main
+```
+
+Every deployed image must be built from a pushed commit, with
+`SOURCE_URL` and `SOURCE_COMMIT` set, so `GET /source` points at it.
 
 ## Tests
 
